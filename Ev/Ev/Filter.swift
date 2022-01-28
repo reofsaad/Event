@@ -1,5 +1,5 @@
 //
-//  Themes.swift
+//  Filter.swift
 //  Ev
 //
 //  Created by REOF ALMESHARI on 22/06/1443 AH.
@@ -7,99 +7,44 @@
 
 import SwiftUI
 
-struct Themes: View {
-    public var Place:[PlaceData]=PlaceList.Places
-            var body: some View {
-           
-                    
-                ZStack{
-                    Color(.white)
-                   
-                    VStack{
-                        NavigationView{
-                           
-                        ScrollView(.vertical,showsIndicators: false){
-                      //
-                            SearchBarr().padding()
-                       
-                   
-//
-//
-                      
-                  
-                    
-                    //Order(item:OrderData)
-                 
-                   
-                            Group{
-                                ForEach(Place,id:\.self){
-                                plac in
-                                    NavigationLink(destination:Text(plac.Image))
-                                    {PlaceCell (plac: plac)}
-                                Divider()
-                            }
-                            }}
-                        
-                            .navigationTitle("Orders")     }
-                            
-                        
-                    }
-                       
-                        
-                
-                  
-                    
-//
-                    
-                    
-                }
-                
-            }
-            }
-
-struct SearchBarr: View {
-    @State var searchText:String = ""
-    @State  var isActive=false
+struct Filter: View {
     @State var showNewScreen : Bool = false
-
     var body: some View {
-        
-        VStack{
-     
-        HStack{
+      
+        ZStack{
+            Color.white
+                .edgesIgnoringSafeArea(.all)
             
-            Image(systemName:"magnifyingglass")
-            
-            TextField("search", text:$searchText)
-            
-            
-            Button("\(Image(systemName: "slider.horizontal.3"))")
-            { showNewScreen.toggle()
-               
-                 
-            }   .foregroundColor(Color(red: 0.152, green: 0.417, blue: 0.31))
-            
-            
-            }   .padding()
-                .background(.regularMaterial)
-                .cornerRadius(8.0)
-                .frame(width: 350, height: 35)
-                .padding()
-            if showNewScreen{
-                NewScreen(showNewScreen: $showNewScreen)
-                    .padding(.top,90)
-                    .transition(.move(edge: .bottom))
-                    .animation(.spring())
+            VStack{
+                Button("Button"){
+                    showNewScreen.toggle()
+                    
+                }.font(.largeTitle)
+                Spacer()
+//                //Method 1 - sheet
+//                    .sheet(isPresented: $showNewScreen, content: {
+//                        NewScreen()
+//                    })
+                //Method 2-Transition
+                if showNewScreen{
+                    NewScreen(showNewScreen: $showNewScreen)
+                        .padding(.top,100)
+                        .transition(.move(edge: .bottom))
+                        .animation(.spring())
+                }
             }
-        }
-        .zIndex(2.0)
-        
-     
-        
+            .zIndex(2.0)
+//                // Method 3 - Animation
+//                NewScreen(showNewScreen: $showNewScreen)
+//                    .padding(.top,100)
+//                    .offset(y:showNewScreen ? 0 : UIScreen.main.bounds.height)
+//                    .animation(.spring())
+//        }
     }
+    }
+    
 }
-
-struct Filters : View{
+struct Filteer : View{
     var body: some View{
         VStack(alignment:.leading,spacing: 30){
             //
@@ -197,7 +142,7 @@ struct Filters : View{
 
     }
 }
-struct NewScreens :View{
+struct NewScreen :View{
     @Binding var showNewScreen : Bool
     @Environment(\.presentationMode) var presentationMode
     var body: some View{
@@ -219,48 +164,76 @@ struct NewScreens :View{
     }
 }
 
-        struct PlaceCell:View{
-            var plac:PlaceData
-            var body: some View{
-                HStack{
-                    
-                    Image(plac.Image)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 60, height: 60)
-                        .padding(.vertical,4)
-                        .padding(.horizontal,20)
-                    
-                    VStack(alignment:.leading,spacing: 4){
-                        Text(plac.Name)
-                            .fontWeight(.medium)
-                            .foregroundColor(Color(red: 0.127, green: 0.194, blue: 0.136))
-                        Text(plac.Info)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    Spacer()
-                    Text("\(plac.Price)")
-                    
-                        .fontWeight(.medium)
-                        .foregroundColor(Color(red: 0.127, green: 0.194, blue: 0.136))
-                        .padding()
-
-                          
-                          
-                      
-                      
-                  }
-
-                            
-                        }
-              
-            }
-
-struct Themes_Previews: PreviewProvider {
+struct Filter_Previews: PreviewProvider {
     static var previews: some View {
-        Themes()
+        Filter()
     }
 }
 
+struct PriceRange: View {
+    @State var width : CGFloat = 0
+    @State var width2 : CGFloat = 25
+    var totalWidth = UIScreen.main.bounds.width - 60
+    var body: some View {
+        VStack{
+            
+            
+            
+            
+        ZStack{
+//            Image("vector1") .padding(.leading,8)
+//            Image("vector2")
+//            HStack{
+//
+//                Image("Ellipse")
+//
+//                    .padding(.horizontal,60)
+//
+//
+//                Image("Ellipse")
+//
+//
+//
+//                    .padding(.horizontal,60)
+//            }
+            Rectangle()
+                .fill(Color.black.opacity(0.20))
+                .frame(height: 6)
+            Rectangle()
+                .fill(Color.black)
+                .frame(width: self.width2 - self.width, height: 6)
+                .offset(x: self.width + 18)
+            HStack(spacing:0){
+                Circle()
+                    .fill(Color.black)
+                    .frame(width: 18, height: 18)
+                    .offset(x:self.width)
+                    .gesture(
+                    DragGesture()
+                        .onChanged({(value) in
+                    if value.location.x >= 0 && value.location.x <= self.width2 {
+
+                        self.width = value.location.x}
+                        }
+                                  )
+                    )
+                Circle()
+                    .fill(Color.black)
+                    .frame(width: 18, height: 18)
+                    .offset(x:self.width2)
+                    .gesture(
+                    DragGesture()
+                        .onChanged({(value) in
+                            if value.location.x <= self.totalWidth && value.location.x >= self.width {
+
+                        self.width = value.location.x}
+                        }
+                                  )
+                    )
+            }
+
+        }
+            
+        }.padding()
+        }
+}
